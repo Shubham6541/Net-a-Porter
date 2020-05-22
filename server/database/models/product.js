@@ -1,21 +1,19 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const Item = new Schema(
+const Product = new Schema(
     {
-        name: { type: String, required: true },
-        url: { type: String, required: true },
+        name: { type: String},
+        url: { type: String},
         brand: {
-                name:{type: String, required: true}
+                name:{type: String}
             },
         stock: {
-            available: { type: Boolean, required: true}
-        },
-        created_at: {
-            $date:{ type: Date, required: true}
+            available: { type: Boolean}
         }
+
     },
-    { strict: false},
+    {strict: false},
 );
 
-module.exports = mongoose.model('item', Item)
+module.exports = mongoose.model('product', Product)
