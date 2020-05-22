@@ -5,6 +5,14 @@ const QueryGenerate = require('./filterProcessing');
 
 let cache = flatCache.load('productsCache', path.resolve('../cache'));
 
+const responseData = (product) => {
+    return {
+        name: product["name"],
+        brand: {name: product.brand.name},
+        media: {standard: [{order: 1, url: product.media.standard[0].url}]}
+    }
+};
+
 let flatCacheMiddleware = (req, res, next) => {
     let key = '__express1__' + JSON.stringify(req.body.filters)
     console.log(key);
@@ -26,7 +34,6 @@ let flatCacheMiddleware = (req, res, next) => {
 let getOutput = function (req, res) {
     const filters = req.body.filters;
     const query = Promise.resolve(QueryGenerate(filters));
-    query.then((value)=>console.log(value));
     query.then((value) => product.find(value, (err, Products) => {
         if (err) {
             return res.status(400).json({success: false, error: err});
@@ -34,8 +41,11 @@ let getOutput = function (req, res) {
         if (!Products.length) {
             return res.status(400).json({success: false, error: 'No matching product'});
         }
-        return res.status(200).json({success: true, data: Products});
+        let data = [];
+        Products.map(product => data.push(responseData(product)));
+        return res.status(200).json({success: true, data: data});
     }).catch(err => console.log(err)));
 };
+
 
 module.exports = {flatCacheMiddleware, getOutput};
