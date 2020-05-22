@@ -5,7 +5,22 @@ const QueryGenerate = require('./filterProcessing');
 
 let cache = flatCache.load('productsCache', path.resolve('../cache'));
 
-
+let flatCacheMiddleware = (req, res, next) => {
+    let key = '__express1__' + JSON.stringify(req.body.filters)
+    console.log(key);
+    let cacheContent = cache.getKey(key);
+    if (cacheContent) {
+        res.status(200).json(cacheContent);
+    } else {
+        res.sendResponse = res.status(200).json;
+        res.status(200).json = (body) => {
+            cache.setKey(key, body);
+            cache.save();
+            res.sendResponse(body)
+        };
+        next()
+    }
+};
 
 
 let getOutput = function (req, res) {
@@ -23,4 +38,4 @@ let getOutput = function (req, res) {
     }).catch(err => console.log(err)));
 };
 
-module.exports = { getOutput};
+module.exports = {flatCacheMiddleware, getOutput};
