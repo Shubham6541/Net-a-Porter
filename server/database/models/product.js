@@ -10,6 +10,13 @@ const Product = new Schema(
             },
         stock: {
             available: { type: Boolean}
+        },
+        media:{
+            standard:[
+                {order:{type: Number},
+                url:{type:String}
+                }
+            ]
         }
 
     },
