@@ -1,34 +1,34 @@
 const Request = require("request");
 const ndJsonParser = require('ndjson-parse');
-const jsonToMongo = require('json2mongo');
 const Product = require('./models/product');
+const {LOAD_DATA_URI} = require('./../config');
 
-
-const extracted = async (parsedNdJson, i) => {
-        // delete parsedNdjson[j]['_id'];
-        console.log(jsonToMongo(parsedNdJson[i]));
+const store = async (parsedNdJson, i) => {
+        //creating the database object
         let post = await new Product(parsedNdJson[i]);
-        console.log(".........",post);
+        //saving the data to database
         await post.save().then(createdPost => {
             console.log("post successfully saved");
         });
 };
+
+//Used to load the data into the mongodb database from the DATABASE_URL
 const loadData = async function(req,res) {
-    console.log("Performing insertion");
-    // await Product.deleteMany({},console.log("Deleted Successfully"));
-    console.log(".......");
-    const loading = Promise.resolve(Request.get("https://greendeck-datasets-2.s3.amazonaws.com/netaporter_gb_similar.json", async (error, response, body) => {
+    //Removing all elements from the database
+    await Product.deleteMany({},console.log("Deleted Successfully"));
+
+    //Getting the data from the url
+    const saveData = Promise.resolve(Request.get(LOAD_DATA_URI, async (error, response, body) => {
         if (error) {
-            return console.log(error);
+            res.send(error);
         }
-        let parsedNdJson = await ndJsonParser(body);
-        console.log("...........",parsedNdJson.length);
+        //parsing the data from ndJson to json
+        const parsedNdJson = await ndJsonParser(body);
         for (let i = 0; i < parsedNdJson.length; i++) {
-            console.log(">>>>>>>>>", i);
-            await extracted(parsedNdJson, i);
+            await store(parsedNdJson, i);
         }
     }));
-    loading.then(res.send("updating database"));
+    await saveData.then(res.send("updating database"));
 };
 
 module.exports = loadData;

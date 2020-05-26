@@ -1,22 +1,27 @@
 const path = require('path');
 const flatCache = require('flat-cache')
 const product = require('../database/models/product');
-const QueryGenerate = require('./filterProcessing');
+const GenerateQuery = require('./processFIlters');
+const cache = flatCache.load('productsCache', path.resolve('../cache'));
 
-let cache = flatCache.load('productsCache', path.resolve('../cache'));
-
+//type of response which client will receive, pruning of extra data from the response to reduce the data size
 const responseData = (product) => {
     return {
         name: product["name"],
         brand: {name: product.brand.name},
+        created_at: product.created_at,
+        stock:{available: product.stock.available},
+        price: product.price,
+        description_text: product.description_text,
         media: {standard: [{order: 1, url: product.media.standard[0].url}]}
     }
 };
 
-let flatCacheMiddleware = (req, res, next) => {
-    let key = '__express1__' + JSON.stringify(req.body.filters)
-    console.log(key);
-    let cacheContent = cache.getKey(key);
+//caching data for faster response
+const cacheMiddleware = (req, res, next) => {
+    const key = '__express__' + JSON.stringify(req.body.filters)
+    const cacheContent = cache.getKey(key);
+    //getting data from the cache and if it is not available then caching it
     if (cacheContent) {
         res.status(200).json(cacheContent);
     } else {
@@ -30,17 +35,19 @@ let flatCacheMiddleware = (req, res, next) => {
     }
 };
 
-
-let getOutput = function (req, res) {
-    const filters = req.body.filters;
-    const query = Promise.resolve(QueryGenerate(filters));
+//process filters and get data from the database accordingly
+const getProductList = function (req, res) {
+    const filters = req.body.filters || [];
+    const query = Promise.resolve(GenerateQuery(filters));
     query.then((value) => product.find(value, (err, Products) => {
         if (err) {
             return res.status(400).json({success: false, error: err});
         }
+        //dealing the case when no matched product is found
         if (!Products.length) {
             return res.status(400).json({success: false, error: 'No matching product'});
         }
+        //filtering the data and then saving it
         let data = [];
         Products.map(product => data.push(responseData(product)));
         return res.status(200).json({success: true, data: data});
@@ -48,4 +55,4 @@ let getOutput = function (req, res) {
 };
 
 
-module.exports = {flatCacheMiddleware, getOutput};
+module.exports = {flatCacheMiddleware: cacheMiddleware, getProductList: getProductList};
