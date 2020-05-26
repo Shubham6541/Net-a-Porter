@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const Product = new Schema(
@@ -58,9 +58,9 @@ const Product = new Schema(
         },
         updated_at: {
             type: Date
-        },
+        }
     },
-    {strict: false},
+    {strict: false}
 );
 
-module.exports = mongoose.model('product', Product)
+module.exports = mongoose.model("product", Product)

@@ -1,11 +1,11 @@
-const path = require('path');
-const flatCache = require('flat-cache')
-const product = require('../database/models/product');
-const GenerateQuery = require('./processFIlters');
-const cache = flatCache.load('productsCache', path.resolve('../cache'));
+const path = require("path");
+const flatCache = require("flat-cache")
+const product = require("../database/models/product");
+const GenerateQuery = require("./processFIlters");
+const cache = flatCache.load("productsCache", path.resolve("../cache"));
 
 //type of response which client will receive, pruning of extra data from the response to reduce the data size
-module.exports = responseData = (product) => {
+const responseData = (product) => {
     return {
         name: product["name"],
         brand: {name: product.brand.name},
@@ -19,7 +19,7 @@ module.exports = responseData = (product) => {
 
 //caching data for faster response
 const cacheMiddleware = (req, res, next) => {
-    const key = '__express__' + JSON.stringify(req.body.filters)
+    const key = "_product_" + JSON.stringify(req.body.filters)
     const cacheContent = cache.getKey(key);
     if (cacheContent) {
         res.status(200).json(cacheContent);
@@ -43,7 +43,7 @@ const getProductList = function (req, res) {
             return res.status(400).json({success: false, error: err});
         }
         if (!Products.length) {
-            return res.status(400).json({success: false, error: 'No matching product'});
+            return res.status(400).json({success: false, error: "No matching product"});
         }
         //filtering the data and then saving it
         let data = [];
@@ -51,7 +51,6 @@ const getProductList = function (req, res) {
         return res.status(200).json({success: true, data: data});
     }).catch(err => console.log(err)));
 };
-
 
 module.exports = {
     cacheMiddleware: cacheMiddleware,
