@@ -1,25 +1,33 @@
-import React from 'react';
-import ProductDetails from "./ProductDetails";
+import React, {useState, Suspense, useEffect} from 'react';
 import Grid from "@material-ui/core/Grid";
+import './components.css';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import BottomScrollListener from "react-bottom-scroll-listener";
 
+const ProductDetails = React.lazy(() => import('./ProductDetails'));
 
-
+const ProgressBar = () => <CircularProgress style={{display: "block", marginLeft: "auto", marginRight: "auto"}}/>;
 const ProductList = (props) => {
-    const info = {
-        name:'Feather-embellished silk-twill robe',
-        url:'http://cache.net-a-porter.com/images/products/1000954/1000954_in_pp.jpg'
+    const {items} = props;
+    const [count, setCount] = useState(0);
+
+    const handleOnDocumentBottom = () => {
+        setCount(prevState => prevState + 12)
     };
     return (
-        <div><h1>No</h1>
-            <Grid container spacing={3} >
-                <ProductDetails info={info}/>
-                <ProductDetails info={info}/>
-                <ProductDetails info={info}/>
-                <ProductDetails info={info}/>
-                <ProductDetails info={info}/>
-                <ProductDetails info={info}/>
+        <div>
+            <Grid container spacing={2}>
+                {items.slice(0, count + 12).map(item =>
+                    <Grid item xs>
+                        <Suspense fallback={<ProgressBar/>}>
+                            <ProductDetails info={item}/>
+                        </Suspense>
+                    </Grid>
+                )}
             </Grid>
-
+            <BottomScrollListener onBottom={handleOnDocumentBottom}/>
+            {(count < items.length) && <ProgressBar/>
+            }
         </div>
     );
 };
