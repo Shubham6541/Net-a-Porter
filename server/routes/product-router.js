@@ -1,10 +1,9 @@
 const express = require('express');
-const output = require('../controllers/product');
-const LoadData = require('../database/loadData');
+const ProductController = require('../controllers/product-controller');
+const LoadDataToDatabase = require('../database/loadData');
 const router = express.Router();
 
-router.post('/products',output.flatCacheMiddleware,output.getOutput);
-router.post('/insert',LoadData);
-
+router.post('/products', ProductController.cacheMiddleware, ProductController.getProductList);
+router.post('/insert', LoadDataToDatabase);
 
 module.exports = router;

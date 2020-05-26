@@ -1,21 +1,21 @@
 const Request = require("request");
 const ndJsonParser = require('ndjson-parse');
+const jsonToMongo = require('json2mongo');
 const Product = require('./models/product');
 const {LOAD_DATA_URI} = require('./../config');
 
+//creating and saving the database object
 const store = async (parsedNdJson, i) => {
-        //creating the database object
-        let post = await new Product(parsedNdJson[i]);
-        //saving the data to database
-        await post.save().then(createdPost => {
-            console.log("post successfully saved");
-        });
+    const post = await new Product(jsonToMongo(parsedNdJson[i]));
+    await post.save().then(() => {
+        console.log("post successfully saved");
+    });
 };
 
 //Used to load the data into the mongodb database from the DATABASE_URL
-const loadData = async function(req,res) {
+const loadData = async function (req, res) {
     //Removing all elements from the database
-    await Product.deleteMany({},console.log("Deleted Successfully"));
+    await Product.deleteMany({}, console.log("Deleted Successfully"));
 
     //Getting the data from the url
     const saveData = Promise.resolve(Request.get(LOAD_DATA_URI, async (error, response, body) => {

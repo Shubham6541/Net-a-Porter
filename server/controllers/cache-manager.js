@@ -5,20 +5,19 @@ const Product = require('../database/models/product');
 const responseData = require('./product-controller');
 
 function clearCache() {
-    console.log("Celaring");
     flatCache.clearAll();
 };
 
 function fillCache() {
-    Product.find().then(items=>{
+    Product.find().then(items => {
         let data = [];
         items.map(item => data.push(responseData(item)));
-        cache.setKey('__express__[]',data);
+        cache.setKey('__express__[]', data);
         cache.save();
     })
 };
 
-setInterval(async ()=>{
+setInterval(async () => {
     await clearCache();
     await fillCache();
-    }, 360000);
+}, 360000);

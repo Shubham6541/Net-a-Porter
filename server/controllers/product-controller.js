@@ -5,12 +5,12 @@ const GenerateQuery = require('./processFIlters');
 const cache = flatCache.load('productsCache', path.resolve('../cache'));
 
 //type of response which client will receive, pruning of extra data from the response to reduce the data size
-const responseData = (product) => {
+module.exports = responseData = (product) => {
     return {
         name: product["name"],
         brand: {name: product.brand.name},
         created_at: product.created_at,
-        stock:{available: product.stock.available},
+        stock: {available: product.stock.available},
         price: product.price,
         description_text: product.description_text,
         media: {standard: [{order: 1, url: product.media.standard[0].url}]}
@@ -21,7 +21,6 @@ const responseData = (product) => {
 const cacheMiddleware = (req, res, next) => {
     const key = '__express__' + JSON.stringify(req.body.filters)
     const cacheContent = cache.getKey(key);
-    //getting data from the cache and if it is not available then caching it
     if (cacheContent) {
         res.status(200).json(cacheContent);
     } else {
@@ -43,7 +42,6 @@ const getProductList = function (req, res) {
         if (err) {
             return res.status(400).json({success: false, error: err});
         }
-        //dealing the case when no matched product is found
         if (!Products.length) {
             return res.status(400).json({success: false, error: 'No matching product'});
         }
@@ -55,4 +53,7 @@ const getProductList = function (req, res) {
 };
 
 
-module.exports = {flatCacheMiddleware: cacheMiddleware, getProductList: getProductList};
+module.exports = {
+    cacheMiddleware: cacheMiddleware,
+    getProductList: getProductList
+};
