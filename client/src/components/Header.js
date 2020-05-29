@@ -7,8 +7,8 @@ const Header = () => {
     return (
         <div>
             <AppBar>
-                <Toolbar style={{backgroundColor:'#696969'}}>
-                    <Typography variant="h4" >Net A Porter</Typography>
+                <Toolbar style={{backgroundColor: '#696969'}}>
+                    <Typography variant="h4">Net-a-Porter</Typography>
                 </Toolbar>
             </AppBar>
         </div>

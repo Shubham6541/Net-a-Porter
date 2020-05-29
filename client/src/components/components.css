@@ -42,7 +42,7 @@
     border-radius: 10px;
     background-color: #fff;
     backface-visibility: hidden;
-    box-shadow: 0 10px 35px rgba(50,50,93,.1),0 2px 15px rgba(0,0,0,.07);
+    box-shadow: 0 10px 35px rgba(50, 50, 93, .1), 0 2px 15px rgba(0, 0, 0, .07);
 }
 
 /*- Front side -*/
@@ -66,20 +66,20 @@
 
 }
 
-.content{
-    width:100%;
-    heright:700px;
+.content {
+    width: 100%;
+    heright: 700px;
     position: center;
     overflow-y: scroll;
 }
 
-.content{
-    width:100%;
-    heright:700px;
+.content {
+    width: 100%;
+    heright: 700px;
     overflow-y: scroll;
 }
 
-.filter{
+.filter {
     padding: 15px;
     border-bottom: 0.05em solid black;
 }

@@ -1,31 +1,36 @@
 export const filterType =
     [
         {
+            formLabel: 'Regular Price Comparator',
             type: 'comparable',
-            label: 'Enter Discount',
+            label: 'Regular price',
             key: 'regular_price',
             value: 0,
             operator: ''
         },
         {
+            formLabel: 'Search by Brand Name',
             type: 'searchable',
-            label: 'Enter Brand Name',
+            label: 'Brand Name',
             key: 'brand',
             value: '',
             operator: 'contains',
         },
         {
+            formLabel: 'Stock Availability',
             type: 'boolean',
-            label: ['Stock Availability', 'In stock', 'out of stock'],
+            label: ['In stock', 'out of stock'],
             key: 'stock_available',
             value: false,
             operator: 'equals'
         },
         {
+            formLabel: 'Created Between',
             type: 'dateInRange',
-            label: ['Created At', 'Start date', 'End Date'],
+            label: ['Start date', 'End Date'],
             key: 'created_at',
             value: [],
-            operator: 'between'
+            operator: 'between',
+            helperText: 'Enter date range to get items list'
         }
     ];

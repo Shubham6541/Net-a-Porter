@@ -4,13 +4,14 @@ import ProductList from "../components/ProductList";
 
 function filterProductList(filters, productList) {
     let updatedProductList = productList;
-    filters.forEach(filter => {
+    console.log(filters);
+    updatedProductList && updatedProductList.length !== 0 && filters.forEach(filter => {
         if (filter.key == 'regular_price') {
 
             updatedProductList = updatedProductList.filter(product => product.price.regular_price.value >= filter.value)
         }
         if (filter.key == 'brand') {
-            updatedProductList = updatedProductList.filter(product => product.brand.name.matchAll(filter.value.toLowerCase()))
+            updatedProductList = updatedProductList.filter(product => product.brand.name.match(filter.value.toLowerCase()))
         }
         if (filter.key == 'stock_available') {
             updatedProductList = updatedProductList.filter(product => product.stock.available == filter.value)
@@ -35,10 +36,9 @@ const ProductListPage = (props) => {
     }, []);
 
     const filteredProductList = filterProductList(filters, productList);
-    console.log(productList.length, filteredProductList.length);
     return (
         <div style={{padding: 10}}>
-            <ProductList items={filteredProductList}/>
+            {filteredProductList && <ProductList items={filteredProductList}/>}
         </div>
     );
 };

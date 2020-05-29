@@ -14,21 +14,13 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Grid from "@material-ui/core/Grid";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import './components.css';
+import {debounce} from "../helper/debounce";
 
 const {useRef} = require("react");
 
-function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-        const context = this;
-        if (timeout) clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            timeout = null;
-            func.apply(context, args);
-        }, wait);
-    };
-}
-
+/*Filtering by property comparison. There are three types of comparator i.e., greater than, smaller
+than and equals. This filter is dynamic filter and can be used for any property comparison like
+discount, regular_price, offer_price etc. by minimal changes(described in readme)*/
 export const ComparableFilter = (props) => {
     const {filter, addFilter} = props;
     const [filterParameters, setFilterParameters] = useState({
@@ -51,13 +43,13 @@ export const ComparableFilter = (props) => {
             ...filterParameters,
             [name]: (Number(value) ? Number(value) : value)
         });
-    };
+    }
+
     return (
         <div className="filter">
-            <FormLabel>Regular Price Comparator</FormLabel>
-
-            <TextField id="value" name="value" type="Number" fullWidth value={filterParameters.value}
-                       onChange={e => handleChange(e.target.name, e.target.value)}/>
+            <FormLabel>{filter.formLabel}</FormLabel>
+            <TextField name="value" type="Number" fullWidth value={filterParameters.value}
+                       placeholder={filter.label} onChange={e => handleChange(e.target.name, e.target.value)}/>
             <FormControl fullWidth>
                 <InputLabel id="operator">Operator</InputLabel>
                 <Select
@@ -74,11 +66,12 @@ export const ComparableFilter = (props) => {
                     <MenuItem value={'smaller_than'}>Smaller</MenuItem>
                 </Select>
             </FormControl>
-            <FormHelperText>Enter price and operator to get items list accordingly</FormHelperText>
         </div>
     )
 };
 
+/*Searchable filter, based on regex match. It also can be used to search any kind of regex pattern.
+It is dynamic filter and can be used to search any thing like brand or name.*/
 export const SearchableFilter = (props) => {
         const debounceOnChange = React.useCallback(debounce(handleChange, 500), []);
         const {filter, addFilter} = props;
@@ -97,24 +90,25 @@ export const SearchableFilter = (props) => {
                 ...filterParameters,
                 [name]: value
             });
-        };
+        }
 
         return (
             <div className="filter">
-                <FormLabel htmlFor="brand" style={{marginBottom: 15}}>Search by brand name</FormLabel>
+                <FormLabel htmlFor="brand" style={{marginBottom: 15}}>{filter.formLabel}</FormLabel>
                 <br/>
                 <TextField
                     id="brand"
                     name="value"
                     fullWidth
-                    placeholder={"Brand Names"}
+                    placeholder={filter.label}
                     onChange={e => debounceOnChange(e.target.name, e.target.value)}/>
-                <FormHelperText>Enter brand name to get items list</FormHelperText>
             </div>
         )
     }
 ;
 
+/*Boolean filter for bi-state properties. It is also a dynamic filter and can be used to filter any attributes
+having boolean state.*/
 export const BooleanFilter = (props) => {
     const debounceOnChange = React.useCallback(debounce(handleChange, 500), []);
     const isFirstRun = useRef(true);
@@ -141,26 +135,26 @@ export const BooleanFilter = (props) => {
             [name]: value === "a"
         });
         setCheck(value);
-    };
+    }
 
     return (
         <div className="filter">
             <FormControl component="fieldset">
-                <FormLabel>Stock Availability</FormLabel>
+                <FormLabel>{filter.formLabel}</FormLabel>
                 <RadioGroup aria-label="gender" name="value" value={check} onChange={handleChange}
                             style={{display: "inline"}}>
                     <FormControlLabel value="a" onChange={e => debounceOnChange(e.target.name, e.target.value)}
-                                      control={<Radio/>} label="In Stock"/>
+                                      control={<Radio/>} label={filter.label[0]}/>
                     <FormControlLabel value="b" onChange={e => debounceOnChange(e.target.name, e.target.value)}
-                                      control={<Radio/>} label="Out of Stock"/>
+                                      control={<Radio/>} label={filter.label[1]}/>
                 </RadioGroup>
-                <FormHelperText>Choose option to know stock availability</FormHelperText>
             </FormControl>
         </div>
     )
 };
 
-
+/*Date comparator filter, which is used to find the date between range of two given dates. It is also
+a dynamic filter and can be used for any date comparison.*/
 export const DateInRangeFilter = (props) => {
     const {filter, addFilter} = props;
     const [filterParameters, setFilterParameters] = useState({
@@ -188,13 +182,12 @@ export const DateInRangeFilter = (props) => {
         }
         const updatedDates = {...filterParameters};
         const updatedDateArray = updatedDates.value;
-        console.log(updatedDateArray);
         if (type === 'start') {
             updatedDateArray[0] = new Date(date.toDateString());
         } else {
             updatedDateArray[1] = new Date(date.toDateString());
         }
-        updatedDateArray.length == 2 && setFilterParameters({
+        updatedDateArray.length === 2 && setFilterParameters({
             ...filterParameters,
             value: updatedDateArray
         });
@@ -203,13 +196,13 @@ export const DateInRangeFilter = (props) => {
     return (
         <div style={{padding: 20}}>
             <FormControl>
-                <FormLabel>Created At</FormLabel>
+                <FormLabel>{filter.formLabel}</FormLabel>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container spacing={1}>
                         <Grid item xs style={{minWidth: 120}}>
                             <KeyboardDatePicker
                                 margin="normal"
-                                label="Start Date"
+                                label={filter.label[0]}
                                 format="dd MMM yyyy"
                                 value={filterParameters.value[0]}
                                 onChange={(date) => handleChange(date, 'start')}
@@ -221,7 +214,7 @@ export const DateInRangeFilter = (props) => {
                         <Grid item xs style={{minWidth: 120}}>
                             <KeyboardDatePicker
                                 margin="normal"
-                                label="End Date"
+                                label={filter.label[1]}
                                 format="dd MMM yyyy"
                                 value={filterParameters.value[1]}
                                 onChange={(date) => handleChange(date, 'end')}
@@ -232,7 +225,7 @@ export const DateInRangeFilter = (props) => {
                         </Grid>
                     </Grid>
                 </MuiPickersUtilsProvider>
-                <FormHelperText id="my-helper-text">Enter date range to get items list</FormHelperText>
+                <FormHelperText id="my-helper-text">{filter.helperText}</FormHelperText>
             </FormControl>
         </div>
     );
