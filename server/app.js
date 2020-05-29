@@ -19,11 +19,11 @@ app.get("/welcome", (req, res) => {
 });
 
 
-app.use(express.static(path.join(__dirname, '../client/build')));
-
-app.get('/', (req, res) => {
-    res.sendfile(path.join(__dirname = 'client/build/index.html'));
-});
+// app.use(express.static(path.join(__dirname, '../client/build')));
+//
+// app.get('/', (req, res) => {
+//     res.sendfile(path.join(__dirname = 'client/build/index.html'));
+// });
 //Starting the server
 database.then(() =>
     app.listen(PORT, () =>
