@@ -7,43 +7,80 @@ import FormLabel from "@material-ui/core/FormLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import {
-    MuiPickersUtilsProvider,
-    KeyboardDatePicker,
-} from '@material-ui/pickers';
+import {MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Grid from "@material-ui/core/Grid";
-import {filterType} from '../constants/FIltersType';
+import FormHelperText from "@material-ui/core/FormHelperText";
+import './components.css';
 
-const Comparable = (props) => {
-    const {handleChange} = props;
+const {useRef} = require("react");
+
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        const context = this;
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            timeout = null;
+            func.apply(context, args);
+        }, wait);
+    };
+}
+
+export const ComparableFilter = (props) => {
+    const {filter, addFilter} = props;
+    const [filterParameters, setFilterParameters] = useState({
+        key: filter.key,
+        operator: '',
+        value: '',
+    });
+
+    useEffect(() => {
+            filterParameters.value !== 0 && filterParameters.operator !== '' && addFilter(filterParameters);
+        }
+        , [filterParameters]);
+
+
+    function handleChange(name, value) {
+        if (Number(value) < 0) {
+            return alert("Regular price can not be smaller than 0");
+        }
+        setFilterParameters({
+            ...filterParameters,
+            [name]: (Number(value) ? Number(value) : value)
+        });
+    };
     return (
-        <div style={{padding: 5}}>
-            <TextField name="value" fullWidth placeholder={"Regular Price "} onChange={handleChange}/>
+        <div className="filter">
+            <FormLabel>Regular Price Comparator</FormLabel>
+
+            <TextField id="value" name="value" type="Number" fullWidth value={filterParameters.value}
+                       onChange={e => handleChange(e.target.name, e.target.value)}/>
             <FormControl fullWidth>
-                <InputLabel id="demo-controlled-open-select-label">Operator</InputLabel>
+                <InputLabel id="operator">Operator</InputLabel>
                 <Select
-                    labelId="demo-controlled-open-select-label"
-                    id="demo-controlled-open-select"
+                    id="operator"
+                    placeholder="Operator"
                     name="operator"
                     fullWidth
-                    onChange={handleChange}
-                ><MenuItem value="">
-                    <em>None</em>
-                </MenuItem>
+                    value={filterParameters.operator}
+                    onChange={e => handleChange(e.target.name, e.target.value)}
+                >
+                    <MenuItem value=""><em>None</em></MenuItem>
                     <MenuItem value={'equal'}>Equal</MenuItem>
                     <MenuItem value={'greater_than'}>Greater</MenuItem>
                     <MenuItem value={'smaller_than'}>Smaller</MenuItem>
                 </Select>
             </FormControl>
+            <FormHelperText>Enter price and operator to get items list accordingly</FormHelperText>
         </div>
     )
 };
 
-
-const Searchable = (props) => {
+export const SearchableFilter = (props) => {
+        const debounceOnChange = React.useCallback(debounce(handleChange, 500), []);
         const {filter, addFilter} = props;
         const [filterParameters, setFilterParameters] = useState({
             key: filter.key,
@@ -52,32 +89,37 @@ const Searchable = (props) => {
         });
 
         useEffect(() => {
-                addFilter(filterParameters);
-            }
-            , [filterParameters]);
+            addFilter(filterParameters)
+        }, [filterParameters]);
 
-        const handleChange = (e) => {
+        function handleChange(name, value) {
             setFilterParameters({
                 ...filterParameters,
-                [e.target.name]: e.target.value
+                [name]: value
             });
         };
 
         return (
-            <div style={{padding: 10}}>
+            <div className="filter">
+                <FormLabel htmlFor="brand" style={{marginBottom: 15}}>Search by brand name</FormLabel>
+                <br/>
                 <TextField
                     id="brand"
                     name="value"
                     fullWidth
                     placeholder={"Brand Names"}
-                    onChange={handleChange}/>
+                    onChange={e => debounceOnChange(e.target.name, e.target.value)}/>
+                <FormHelperText>Enter brand name to get items list</FormHelperText>
             </div>
         )
     }
 ;
 
-const Checkable = (props) => {
+export const BooleanFilter = (props) => {
+    const debounceOnChange = React.useCallback(debounce(handleChange, 500), []);
+    const isFirstRun = useRef(true);
     const {filter, addFilter} = props;
+    const [check, setCheck] = useState('');
     const [filterParameters, setFilterParameters] = useState({
         key: filter.key,
         operator: filter.operator,
@@ -85,120 +127,113 @@ const Checkable = (props) => {
     });
 
     useEffect(() => {
+            if (isFirstRun.current) {
+                isFirstRun.current = false;
+                return;
+            }
             addFilter(filterParameters);
         }
         , [filterParameters]);
 
-    const handleChange = (e) => {
+    function handleChange(name, value) {
         setFilterParameters({
             ...filterParameters,
-            [e.target.name]: e.target.value
+            [name]: value === "a"
         });
+        setCheck(value);
     };
 
     return (
-        <div style={{padding: 10}}>
+        <div className="filter">
             <FormControl component="fieldset">
-                <FormLabel component="legend">Stock Availability</FormLabel>
-                <RadioGroup aria-label="gender" name="value" value={filterParameters.value} onChange={handleChange}>
-                    <FormControlLabel value={true} onChange={handleChange} control={<Radio checked={filterParameters===true}/>} label="In Stock"/>
-                    <FormControlLabel value={false} onChange={handleChange} control={<Radio checked={filterParameters===false}/>} label="Out of Stock"/>
+                <FormLabel>Stock Availability</FormLabel>
+                <RadioGroup aria-label="gender" name="value" value={check} onChange={handleChange}
+                            style={{display: "inline"}}>
+                    <FormControlLabel value="a" onChange={e => debounceOnChange(e.target.name, e.target.value)}
+                                      control={<Radio/>} label="In Stock"/>
+                    <FormControlLabel value="b" onChange={e => debounceOnChange(e.target.name, e.target.value)}
+                                      control={<Radio/>} label="Out of Stock"/>
                 </RadioGroup>
+                <FormHelperText>Choose option to know stock availability</FormHelperText>
             </FormControl>
         </div>
     )
 };
 
-const DateInRange = (props) => {
+
+export const DateInRangeFilter = (props) => {
     const {filter, addFilter} = props;
     const [filterParameters, setFilterParameters] = useState({
         key: filter.key,
         operator: filter.operator,
-        value:    [new Date('Tue Aug 26 2014 21:11:00 GMT+0530'),new Date()]
-
-});
-
+        value: [new Date('Aug 26 2018'), new Date('28 Aug 2019')]
+    });
+    const isFirstRun = useRef(true);
+    console.log(isFirstRun);
     useEffect(() => {
+            if (isFirstRun.current) {
+                isFirstRun.current = false;
+                return;
+            }
             addFilter(filterParameters);
         }
         , [filterParameters]);
 
-    const handleChange = (date) => {
-        let updateDateArray = {...filterParameters};
-        let updateDateArray1 = [...updateDateArray.value];
-        updateDateArray1[1] = new Date(date.toDateString());
-        setFilterParameters({
+    const handleChange = (date, type) => {
+        if (date > new Date()) {
+            return alert("Future dates are not allowed")
+        }
+        if (type === 'end' && filterParameters.value[0] > date) {
+            return alert("End date should be greater than the start date");
+        }
+        const updatedDates = {...filterParameters};
+        const updatedDateArray = updatedDates.value;
+        console.log(updatedDateArray);
+        if (type === 'start') {
+            updatedDateArray[0] = new Date(date.toDateString());
+        } else {
+            updatedDateArray[1] = new Date(date.toDateString());
+        }
+        updatedDateArray.length == 2 && setFilterParameters({
             ...filterParameters,
-            value:[updateDateArray1]
+            value: updatedDateArray
         });
     };
 
     return (
         <div style={{padding: 20}}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid container spacing={1}>
-                    <Grid item xs>
-                        <KeyboardDatePicker
-                            margin="normal"
-                            id="date-picker-dialog"
-                            label="Start Date"
-                            format="dd MMM yyyy"
-                            value={filterParameters.value[0]}
-                            onChange={(date)=>handleChange(date,'start')}
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                        />
+            <FormControl>
+                <FormLabel>Created At</FormLabel>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container spacing={1}>
+                        <Grid item xs style={{minWidth: 120}}>
+                            <KeyboardDatePicker
+                                margin="normal"
+                                label="Start Date"
+                                format="dd MMM yyyy"
+                                value={filterParameters.value[0]}
+                                onChange={(date) => handleChange(date, 'start')}
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs style={{minWidth: 120}}>
+                            <KeyboardDatePicker
+                                margin="normal"
+                                label="End Date"
+                                format="dd MMM yyyy"
+                                value={filterParameters.value[1]}
+                                onChange={(date) => handleChange(date, 'end')}
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item xs>
-                        <KeyboardDatePicker
-                            margin="normal"
-                            id="date-picker-dialog"
-                            name="value[1]"
-                            label="End Date"
-                            format="dd MMM yyyy"
-                            value={filterParameters.value[1]}
-                            onChange={(date)=>handleChange(date,'start')}
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                        />
-                    </Grid>
-                </Grid>
-            </MuiPickersUtilsProvider>
+                </MuiPickersUtilsProvider>
+                <FormHelperText id="my-helper-text">Enter date range to get items list</FormHelperText>
+            </FormControl>
         </div>
     );
 };
-
-const Filter = (props) => {
-    const {addFilter} = props;
-
-    const applyFilter = (filter) => {
-        console.log(filter.key);
-        const handleFilter = async (addfilter1) => {
-
-            console.log(addfilter1);
-            await addFilter(addfilter1);
-        };
-
-        switch (filter.type) {
-            case "comparable":
-                return <Comparable filter={filter} addFilter={handleFilter}/>;
-            case "searchable":
-                return <Searchable filter={filter} addFilter={handleFilter}/>;
-            case "boolean":
-                return <Checkable filter={filter} addFilter={handleFilter}/>;
-            case "dateInRange":
-                return <DateInRange filter={filter} addFilter={handleFilter}/>;
-        }
-    };
-
-    return (
-        <div style={{marginTop: 50, padding: 20}}>
-            {filterType.map((filter) => applyFilter(filter)
-            )}
-        </div>
-    );
-};
-
-export default Filter;

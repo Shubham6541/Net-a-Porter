@@ -7,10 +7,10 @@ import BottomScrollListener from "react-bottom-scroll-listener";
 const ProductDetails = React.lazy(() => import('./ProductDetails'));
 
 const ProgressBar = () => <CircularProgress style={{display: "block", marginLeft: "auto", marginRight: "auto"}}/>;
+
 const ProductList = (props) => {
     const {items} = props;
     const [count, setCount] = useState(0);
-
     const handleOnDocumentBottom = () => {
         setCount(prevState => prevState + 12)
     };
@@ -26,8 +26,7 @@ const ProductList = (props) => {
                 )}
             </Grid>
             <BottomScrollListener onBottom={handleOnDocumentBottom}/>
-            {(count < items.length) && <ProgressBar/>
-            }
+            {(count < items.length) && <ProgressBar/>}
         </div>
     );
 };

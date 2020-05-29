@@ -11,17 +11,17 @@ function App() {
         setFilters(filters);
     };
     return (
-        <div>
+        <div className="App">
             <Header/>
-            <Grid container spacing={1} style={{marginTop:25}}>
-                <Grid item xs style={{minWidth:210}}>
+            <Grid container  spacing={0.5} style={{marginTop:75}}  >
+                <Grid item xs sm={3} md={3} className="sidebar">
                     <FilterPage applyFilters={handleApplyFilter}/>
                 </Grid>
-                    <Grid item xs={9} >
-                    <Suspense fallback={<div>Loading...</div>}>
-                    <ProductListPage filters={filters}/>
-                    </Suspense>
-                </Grid>
+                    <Grid item xs={12} sm={8} md={9} className="main" style={{float:"right"}} justify="center">
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <ProductListPage filters={filters}/>
+                        </Suspense>
+                    </Grid>
             </Grid>
         </div>
     );

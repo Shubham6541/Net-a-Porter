@@ -5,14 +5,40 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from "@material-ui/core/Typography";
 import './components.css';
 import Divider from "@material-ui/core/Divider";
+import Chip from "@material-ui/core/Chip";
+import red from '@material-ui/core/colors/red';
+import { withStyles } from '@material-ui/core/styles';
+const CardMedia = React.lazy(()=>import('@material-ui/core/CardMedia'));
 
-const CardMedia = React.lazy(() => import('@material-ui/core/CardMedia'));
+const StyledChip = withStyles({
 
+})(Chip);
 const useStyles = makeStyles({
     root: {
         height: 450,
-        borderRadius: 10
+        borderRadius: 10,
+        minWidth:290,
+        backgroundColor:'#fffff1'
     },
+    backside:{
+        margin:20,
+        padding:5
+    },
+    regular:{
+        color:'white',
+        backgroundColor:'#F947A2' ,
+        marginTop:18,
+        textDecorationLine:"line-through",
+        textDecorationColor:"black",
+        textDecorationThickness: "solid",
+        width:200
+    },
+    offer:{
+        color:'black',
+        backgroundColor: '#7FFF80',
+        marginTop: 12,
+        width:200
+    }
 });
 
 const CardBack = (props) => {
@@ -22,10 +48,24 @@ const CardBack = (props) => {
             <div className='container-fluid'>
                 <Card className={classes.root}>
                     <CardContent>
-                        <Typography>
+                        <Typography className={classes.backside}>
                             {info.description_text}
                         </Typography>
                         <Divider/>
+                        {info.stock.available?
+                        <Typography variant="h5" color="textSecondary" component="h4" >
+                            Available In Stock
+                        </Typography>:
+                            <Typography variant="h5" color="textSecondary" component="h4">
+                                Out Of Stock
+                            </Typography>}
+                        <Divider/>
+                        <Typography className={classes.backside}>
+                            Created at: {new Date(info.created_at).toDateString()}
+                        </Typography>
+                        <Divider/>
+                        <Chip label={"Regular Price: "+info.price.regular_price.value+" "+info.price.regular_price.currency}  className={classes.regular} />
+                        <Chip label={"Offer Price  : "+info.price.offer_price.value+" "+info.price.offer_price.currency}  className={classes.offer} />
                     </CardContent>
                 </Card>
             </div>
@@ -38,7 +78,7 @@ const CardFront = (props) => {
     const classes = useStyles();
     return (
         <div className="card-side side-front">
-            <div className='container-fluid'>
+            <div >
                 <Card className={classes.root}>
                     <CardMedia
                         component="img"
@@ -49,11 +89,11 @@ const CardFront = (props) => {
                     />
                     <CardContent>
                         <Typography gutterBottom variant="h6" component="h2">
-                            {info.name}
+                            {info.name.substring(0,65)}
                         </Typography>
-                        <Typography variant="h5" color="textSecondary" component="h4"
-                                    style={{bottom: 0, position: "relative"}}>
-                            {info.brand.name}
+                        <Typography variant="h5" color="textSecondary" component="h4" align={"center"}
+                                    style={{marginBottom: 0 }}>
+                            {info.brand.name.toUpperCase().substring(0,25)}
                         </Typography>
                     </CardContent>
                 </Card>
