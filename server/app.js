@@ -1,4 +1,3 @@
-const {PORT} = require("./config");
 const express = require("express");
 const path = require('path');
 const bodyParser = require("body-parser");
@@ -26,7 +25,7 @@ app.get("/", (req, res) => {
 // });
 //Starting the server
 
-    app.listen(PORT, () =>
-        console.log(`Server running on port ${PORT}`)
+    app.listen(process.env.PORT ||8080, () =>
+        console.log('Server running on port 8080')
     );
 
