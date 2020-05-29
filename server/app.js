@@ -14,7 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use("/api", productRouter);
 
-app.get("/welcome", (req, res) => {
+app.get("/", (req, res) => {
     res.send("Welcome to NPA store");
 });
 
@@ -25,9 +25,8 @@ app.get("/welcome", (req, res) => {
 //     res.sendfile(path.join(__dirname = 'client/build/index.html'));
 // });
 //Starting the server
-database.then(() =>
+
     app.listen(PORT, () =>
         console.log(`Server running on port ${PORT}`)
-    )).catch(err => {
-    console.log(err);
-});
+    );
+
