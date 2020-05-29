@@ -28,7 +28,7 @@ const ProductListPage = (props) => {
     const [productList, setProductList] = useState([]);
 
     useEffect(() => {
-        axios.post('/api/products', {
+        axios.post(' https://net-a-porter-store.herokuapp.com/api/products', {
             "filters": []
         }).then((products) => {
             setProductList(products.data.data);
