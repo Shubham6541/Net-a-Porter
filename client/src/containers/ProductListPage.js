@@ -28,7 +28,7 @@ const ProductListPage = (props) => {
     const [productList, setProductList] = useState([]);
 
     useEffect(() => {
-        axios.post('http://localhost:8080/api/products', {
+        axios.post('/api/products', {
             "filters": []
         }).then((products) => {
             setProductList(products.data.data);
