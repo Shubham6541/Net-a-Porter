@@ -1,0 +1,85 @@
+
+.card-container {
+    position: relative;
+    z-index: 1;
+    margin: 10px auto;
+    min-width: 290px;
+    max-width: 330px;
+    height: 450px;
+    perspective: 1000px;
+
+}
+
+.card-body {
+    width: 99%;
+    height: 99%;
+    display: block;
+    transform-style: preserve-3d;
+    transition: all .7s linear;
+    margin: 0 auto;
+
+}
+
+/*- Flipping the card -*/
+.card-container:hover .card-body {
+    transform: rotateY(180deg);
+}
+
+.card-container:hover > .card-body > .side-front {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease-in, visibility .75s linear;
+}
+
+/*- Card sides -*/
+.card-side {
+    position: absolute;
+    top: 0;
+    overflow: hidden;
+    height: 100%;
+    color: #212121;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: #fff;
+    backface-visibility: hidden;
+    box-shadow: 0 10px 35px rgba(50,50,93,.1),0 2px 15px rgba(0,0,0,.07);
+}
+
+/*- Front side -*/
+.side-front [class^=col-xs]:first-of-type {
+    padding-left: 0;
+}
+
+.side-front-content {
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+/*- Back side -*/
+.side-back {
+    z-index: 2;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    transform: rotateY(180deg);
+    margin: 0 auto;
+
+}
+
+.content{
+    width:100%;
+    heright:700px;
+    position: center;
+    overflow-y: scroll;
+}
+
+.content{
+    width:100%;
+    heright:700px;
+    overflow-y: scroll;
+}
+
+.filter{
+    padding: 15px;
+    border-bottom: 0.05em solid black;
+}
