@@ -1,6 +1,6 @@
 //key name and their respective data items
 const query_parameters = {
-    "discount": "price.offer_price.value",
+    "regular_price": "price.regular_price.value",
     "brand": "brand.name",
     "stock_available": "stock.available",
     "created_at": "created_at"

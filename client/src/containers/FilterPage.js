@@ -13,7 +13,7 @@ const defaultProps = {
 };
 const {useRef} = require("react");
 
-//UI for filters management
+//Logic for UI for filters
 const FilterPage = (props) => {
     const {applyFilters} = props;
     const [filters, setFilters] = useState([]);

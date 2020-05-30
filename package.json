@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node server/app.js",
-    "lint": "eslint ./"
+    "heroku-postbuild": "cd client && npm install npm && run build",
+    "lint": "eslint ./server"
   },
   "keywords": [],
   "author": "",

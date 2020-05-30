@@ -17,12 +17,12 @@ app.get("/welcome", (req, res) => {
     res.send("Welcome to NPA store");
 });
 
-
+//Connecting to client
 app.use(express.static(path.join(__dirname, '../client/build')));
-
 app.get('/', (req, res) => {
     res.sendfile(path.join(__dirname = 'client/build/index.html'));
 });
+
 //Starting the server
 database.then(() =>
     app.listen(PORT, () =>
