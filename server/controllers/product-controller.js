@@ -26,7 +26,7 @@ const cacheMiddleware = (req, res, next) => {
     } else {
         res.sendResponse = res.status(200).json;
         res.status(200).json = (body) => {
-            cache.setKey(key, {success: true, data: body});
+            cache.setKey(key, body);
             cache.save();
             res.sendResponse(body)
         };

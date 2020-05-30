@@ -23,7 +23,7 @@ function fillCache() {
     Product.find().then(items => {
         let data = [];
         items.map(item => data.push(responseData(item)));
-        cache.setKey("_product_[]", data);
+        cache.setKey("_product_[]", {success: true, data: data});
         cache.save();
     })
 }
