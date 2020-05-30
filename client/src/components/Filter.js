@@ -30,7 +30,7 @@ export const ComparableFilter = (props) => {
     });
 
     useEffect(() => {
-            filterParameters.value !== 0 && filterParameters.operator !== '' && addFilter(filterParameters);
+            filterParameters.value !== '' && filterParameters.operator !== '' && addFilter(filterParameters);
         }
         , [filterParameters]);
 
@@ -61,7 +61,7 @@ export const ComparableFilter = (props) => {
                     onChange={e => handleChange(e.target.name, e.target.value)}
                 >
                     <MenuItem value=""><em>None</em></MenuItem>
-                    <MenuItem value={'equal'}>Equal</MenuItem>
+                    <MenuItem value={'equals'}>Equal</MenuItem>
                     <MenuItem value={'greater_than'}>Greater</MenuItem>
                     <MenuItem value={'smaller_than'}>Smaller</MenuItem>
                 </Select>
@@ -160,7 +160,7 @@ export const DateInRangeFilter = (props) => {
     const [filterParameters, setFilterParameters] = useState({
         key: filter.key,
         operator: filter.operator,
-        value: [new Date('Aug 26 2018'), new Date('28 Aug 2019')]
+        value: [new Date('Aug 26 2018'), new Date()]
     });
     const isFirstRun = useRef(true);
     console.log(isFirstRun);
@@ -179,6 +179,9 @@ export const DateInRangeFilter = (props) => {
         }
         if (type === 'end' && filterParameters.value[0] > date) {
             return alert("End date should be greater than the start date");
+        }
+        if (type === 'start' && filterParameters.value[1] < date) {
+            return alert("Start date should be smaller than the end date");
         }
         const updatedDates = {...filterParameters};
         const updatedDateArray = updatedDates.value;

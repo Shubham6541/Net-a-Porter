@@ -2,6 +2,11 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import ProductList from "../components/ProductList";
 
+const comparable = (product)=>product["price"]["regular_price"]["value"];
+const searchable = (product)=>product["brand"]["name"];
+const boolean = (product) => product["stock"]["available"];
+const dateInRange = (product) => product["created_at"];
+
 //Filtering of items based on available filters
 function filterProductList(filters, productList) {
     let updatedProductList = productList;
@@ -9,7 +14,7 @@ function filterProductList(filters, productList) {
         if (filter.key === 'regular_price') {
             updatedProductList = updatedProductList.filter(product => {
                     if (filter.operator === 'greater_than') {
-                        return product.price.regular_price.value > filter.value
+                        return comparable(product) > filter.value
                     } else if (filter.operator === 'smaller_than') {
                         return product.price.regular_price.value < filter.value
                     } else {
@@ -19,13 +24,13 @@ function filterProductList(filters, productList) {
             )
         }
         if (filter.key === 'brand') {
-            updatedProductList = updatedProductList.filter(product => product.brand.name.match(filter.value.toLowerCase()))
+            updatedProductList = updatedProductList.filter(product => searchable(product).match(filter.value.toLowerCase()))
         }
         if (filter.key === 'stock_available') {
-            updatedProductList = updatedProductList.filter(product => product.stock.available === filter.value)
+            updatedProductList = updatedProductList.filter(product => boolean(product) === filter.value)
         }
         if (filter.key === 'created_at') {
-            updatedProductList = updatedProductList.filter(product => new Date(product.created_at) >= new Date(filter.value[0]) && new Date(product.created_at) <= new Date(filter.value[1]))
+            updatedProductList = updatedProductList.filter(product => new Date(dateInRange(product)) >= new Date(filter.value[0]) && new Date(dateInRange(product)) <= new Date(filter.value[1]))
         }
     });
     return updatedProductList;

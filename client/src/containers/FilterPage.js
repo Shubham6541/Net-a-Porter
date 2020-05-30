@@ -19,6 +19,22 @@ const FilterPage = (props) => {
     const [filters, setFilters] = useState([]);
     const isFirstRun = useRef(true);
 
+    //Filter selection based on type provided in Filter Constants
+    const applyFilter = (filter) => {
+        switch (filter.type) {
+            case "comparable":
+                return <ComparableFilter filter={filter} addFilter={handleFilter}/>;
+            case "searchable":
+                return <SearchableFilter filter={filter} addFilter={handleFilter}/>;
+            case "boolean":
+                return <BooleanFilter filter={filter} addFilter={handleFilter}/>;
+            case "dateInRange":
+                return <DateInRangeFilter filter={filter} addFilter={handleFilter}/>;
+            default:
+                return;
+        }
+    };
+
     useEffect(() => {
         if (isFirstRun.current) {
             isFirstRun.current = false;
@@ -34,19 +50,6 @@ const FilterPage = (props) => {
         setFilters(updatedFilters);
     };
 
-    //Filter selection based on type provided in Filter Constants
-    const applyFilter = (filter) => {
-        switch (filter.type) {
-            case "comparable":
-                return <ComparableFilter filter={filter} addFilter={handleFilter}/>;
-            case "searchable":
-                return <SearchableFilter filter={filter} addFilter={handleFilter}/>;
-            case "boolean":
-                return <BooleanFilter filter={filter} addFilter={handleFilter}/>;
-            case "dateInRange":
-                return <DateInRangeFilter filter={filter} addFilter={handleFilter}/>;
-        }
-    };
     return (
         <div>
             <Card style={{marginTop: 10, marginBottom: 20, padding: 10, backgroundColor: '#f1fff1'}}>

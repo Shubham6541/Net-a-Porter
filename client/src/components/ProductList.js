@@ -1,4 +1,4 @@
-import React, {useState, Suspense, useEffect} from 'react';
+import React, {useState, Suspense} from 'react';
 import Grid from "@material-ui/core/Grid";
 import './components.css';
 import CircularProgress from '@material-ui/core/CircularProgress';
