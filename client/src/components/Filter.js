@@ -163,7 +163,6 @@ export const DateInRangeFilter = (props) => {
         value: [new Date('Aug 26 2018'), new Date()]
     });
     const isFirstRun = useRef(true);
-    console.log(isFirstRun);
     useEffect(() => {
             if (isFirstRun.current) {
                 isFirstRun.current = false;

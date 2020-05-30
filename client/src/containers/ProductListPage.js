@@ -12,7 +12,6 @@ function filterProductList(filters, productList) {
     let updatedProductList = productList;
     updatedProductList && updatedProductList.length !== 0 && filters.forEach(filter => {
         if (filter.key === 'regular_price') {
-            console.log(filter);
             updatedProductList = updatedProductList.filter(product => {
                     if (filter.value>0 && filter.operator === 'greater_than') {
                         return comparable(product) > filter.value
@@ -49,7 +48,6 @@ const ProductListPage = (props) => {
         axios.post('/api/products', {
             "filters": []
         }).then((products) => {
-            console.log(products);
             setProductList(products.data.data);
         })
     }, []);
