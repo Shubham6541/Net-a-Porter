@@ -14,7 +14,7 @@ function App() {
     return (
         <div className="App">
             <Header/>
-            <Grid container spacing={0.5} style={{marginTop: 75}}>
+            <Grid container spacing={1} style={{marginTop: 75}}>
                 <Grid item xs sm={3} md={3} className="sidebar">
                     <FilterPage applyFilters={handleApplyFilter}/>
                 </Grid>

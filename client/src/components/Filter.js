@@ -30,7 +30,7 @@ export const ComparableFilter = (props) => {
     });
 
     useEffect(() => {
-            filterParameters.value !== '' && filterParameters.operator !== '' && addFilter(filterParameters);
+              filterParameters.operator !== '' && addFilter(filterParameters);
         }
         , [filterParameters]);
 

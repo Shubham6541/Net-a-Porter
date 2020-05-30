@@ -12,13 +12,17 @@ function filterProductList(filters, productList) {
     let updatedProductList = productList;
     updatedProductList && updatedProductList.length !== 0 && filters.forEach(filter => {
         if (filter.key === 'regular_price') {
+            console.log(filter);
             updatedProductList = updatedProductList.filter(product => {
-                    if (filter.operator === 'greater_than') {
+                    if (filter.value>0 && filter.operator === 'greater_than') {
                         return comparable(product) > filter.value
-                    } else if (filter.operator === 'smaller_than') {
+                    } else if (filter.value>0 && filter.operator === 'smaller_than') {
                         return product.price.regular_price.value < filter.value
-                    } else {
+                    } else if(filter.value>0 && filter.operator === 'equals'){
                         return product.price.regular_price.value === filter.value
+                    }
+                    else{
+                        return true;
                     }
                 }
             )
