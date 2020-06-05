@@ -20,6 +20,7 @@ app.get("/welcome", (req, res) => {
 //Connecting to client
 app.use(express.static(path.join(__dirname, '../client/build')));
 app.get('/', (req, res) => {
+    // eslint-disable-next-line
     res.sendfile(path.join(__dirname = 'client/build/index.html'));
 });
 
